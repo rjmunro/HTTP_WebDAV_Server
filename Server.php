@@ -164,14 +164,10 @@ class HTTP_WebDAV_Server
         $uri.= "://".$this->_SERVER["HTTP_HOST"].$this->_SERVER["SCRIPT_NAME"];
         
         // WebDAV has no concept of a query string and clients (including cadaver)
-        // seem to pass '?' unencoded, so we need to extract the path info out
-        // of the request URI ourselves
-        $path_info = substr($this->_SERVER["REQUEST_URI"], strlen($this->_SERVER["SCRIPT_NAME"]));
-
-        // just in case the path came in empty ...
-        if (empty($path_info)) {
-            $path_info = "/";
-        }
+        // seem to pass '?' unencoded, so we need to put the query string back on
+        // ourselves
+        $path_info = empty($this->_SERVER["PATH_INFO"]) ? "/" : $this->_SERVER["PATH_INFO"];
+        $path_info = $path_info.strstr($this->_SERVER["REQUEST_URI"],"?");
 
         $this->base_uri = $uri;
         $this->uri      = $uri . $path_info;
